@@ -37,7 +37,7 @@ Para instalar o seu primeiro perfil, é necessário executar um comando separado
 
 To install your first profile, it is necessary to run a command beforehand.
 ```shell
-$ docker-compose run openvpn create_ovpn_profile --user user --pass pass --profile-name user-profile < /path/to/config.ovpn
+$ docker-compose run simple-openvpn create_ovpn_profile --user user --pass pass --profile-name user-profile < /path/to/config.ovpn
 ```
 Agora você pode iniciar o servidor para conectar seu VPN, mas lembre-se de especificar a variável `PROFILE` com um perfil que você criou anteriormente para que funcione corretamente.
 

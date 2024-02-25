@@ -5,28 +5,28 @@ OVPN_PATH=""
 USER=""
 PASS=""
 
-echo "Iniciando o OpenVPN..."
+echo "Starting OpenVPN..."
 
-# verifica se o profile foi fornecido
+# Check if the profile was provided
 if [ -z "$PROFILE" ]; then
-    echo "Nenhum perfil fornecido."
+    echo "No profile provided."
     exit 1
 fi
 
-# Verifica se o PROFILE_PATH existe
+# Check if PROFILE_PATH exists
 if [ ! -f "$PROFILE_PATH" ]; then
-    echo "Arquivo de perfil não encontrado."
-    echo "Crie um perfil com o comando create_ovpn_profile."
-    echo "Exemplo: docker-compose run openvpn create_ovpn_profile --user user --pass pass --profile-name profile_name < /path/to/config.ovpn"
+    echo "Profile file not found."
+    echo "Create a profile using the create_ovpn_profile command."
+    echo "Example: docker-compose run simple-openvpn create_ovpn_profile --user user --pass pass --profile-name profile_name < /path/to/config.ovpn"
     exit 1
 fi
 
-echo "Selecionando perfil $PROFILE..."
-# Lê o PROFILE_PATH linha por linha
+echo "Selecting profile $PROFILE..."
+# Read PROFILE_PATH line by line
 while IFS=':' read -r field1 field2 field3 field4; do
 
     if [ "$field1" = "$PROFILE" ]; then
-        echo "Perfil encontrado."
+        echo "Profile found."
         USER="$field2"
         PASS="$field3"
         break
@@ -35,9 +35,9 @@ while IFS=':' read -r field1 field2 field3 field4; do
 done < "$PROFILE_PATH"
 
 if [ -z "$USER" ] || [ -z "$PASS" ]; then
-    echo "Perfil não encontrado."
+    echo "Profile not found."
     exit 1
 fi
 
-echo "Iniciando o OpenVPN com o perfil $PROFILE..."
+echo "Starting OpenVPN with profile $PROFILE..."
 exec openvpn --config "/etc/openvpn/profiles/$PROFILE.ovpn" --askpass <(echo -e "$PASS")

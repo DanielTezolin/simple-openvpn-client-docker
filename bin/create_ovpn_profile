@@ -23,42 +23,39 @@ done
 
 
 if [ -z "$user" ] || [ -z "$pass" ] || [ -z "$profile_name" ]; then
-    echo "Argumentos insuficientes."
-    echo "Exemplo: docker-compose run openvpn create_ovpn_profile --user user --pass pass --profile-name profile_name < /path/to/config.ovpn"
+    echo "Insufficient arguments."
+    echo "Example: docker-compose run simple-openvpn create_ovpn_profile --user user --pass pass --profile-name profile_name < /path/to/config.ovpn"
     exit 1
 fi
 
-echo "Gerando perfil de conexao $profile_name"
+echo "Generating connection profile $profile_name"
 
-# verifica se a pasta de perfis existe
+# check if the profiles folder exists
 if [ ! -d $PROFILE_PATH ]; then
     mkdir -p $PROFILE_PATH
 fi
 
-# exclui o arquivo de perfil se ele existir
+# delete the profile file if it exists
 if [ -f "$PROFILE_PATH/$profile_name.ovpn" ]; then
     rm "$PROFILE_PATH/$profile_name.ovpn"
 fi
 
 LINES=0
 
-# Lê o input_data linha por linha
+# Read input_data line by line
 while IFS= read -r line; do
     LINES=$((LINES+1))
     echo "$line" >> "$PROFILE_PATH/$profile_name.ovpn"
 done
 
 if [ $LINES -eq 0 ]; then
-    echo "Arquivo de configuracao nao fornecido."
-    echo "Exemplo: docker-compose run openvpn create_ovpn_profile --user user --pass pass --profile-name profile_name < /path/to/config.ovpn"
+    echo "Configuration file not provided."
+    echo "Example: docker-compose run simple-openvpn create_ovpn_profile --user user --pass pass --profile-name profile_name < /path/to/config.ovpn"
     exit 1
 fi
 
-# cria o arquivo de perfil
+# create the profile file
 echo "$profile_name:$user:$pass" >> "$PROFILE_PATH/profile"
-echo "Perfil de conexao $profile_name criado com sucesso."
+echo "Connection profile $profile_name created successfully."
 
 # /etc/openvpn/profiles
-
-
-
