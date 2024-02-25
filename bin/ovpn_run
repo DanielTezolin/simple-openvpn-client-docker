@@ -1,0 +1,43 @@
+#!/bin/sh
+
+PROFILE_PATH="/etc/openvpn/profiles/profile"
+OVPN_PATH=""
+USER=""
+PASS=""
+
+echo "Iniciando o OpenVPN..."
+
+# verifica se o profile foi fornecido
+if [ -z "$PROFILE" ]; then
+    echo "Nenhum perfil fornecido."
+    exit 1
+fi
+
+# Verifica se o PROFILE_PATH existe
+if [ ! -f "$PROFILE_PATH" ]; then
+    echo "Arquivo de perfil não encontrado."
+    echo "Crie um perfil com o comando create_ovpn_profile."
+    echo "Exemplo: docker-compose run openvpn create_ovpn_profile --user user --pass pass --profile-name profile_name < /path/to/config.ovpn"
+    exit 1
+fi
+
+echo "Selecionando perfil $PROFILE..."
+# Lê o PROFILE_PATH linha por linha
+while IFS=':' read -r field1 field2 field3 field4; do
+
+    if [ "$field1" = "$PROFILE" ]; then
+        echo "Perfil encontrado."
+        USER="$field2"
+        PASS="$field3"
+        break
+    fi
+    
+done < "$PROFILE_PATH"
+
+if [ -z "$USER" ] || [ -z "$PASS" ]; then
+    echo "Perfil não encontrado."
+    exit 1
+fi
+
+echo "Iniciando o OpenVPN com o perfil $PROFILE..."
+exec openvpn --config "/etc/openvpn/profiles/$PROFILE.ovpn" --askpass <(echo -e "$PASS")

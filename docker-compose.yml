@@ -1,0 +1,13 @@
+version: '2'
+services:
+  openvpn:
+    cap_add:
+     - NET_ADMIN
+    image: danieltezolin/simple-openvpn-client
+    container_name: simple-openvpn
+    environment:
+     - PROFILE=your_profile
+    devices:
+      - /dev/net/tun
+    volumes:
+     - ./openvpn-data:/etc/openvpn
